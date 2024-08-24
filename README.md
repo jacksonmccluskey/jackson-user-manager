@@ -102,239 +102,359 @@ MONGO_URI=mongodb://localhost:4444/organizations
 # Atlas: mongodb+srv://user:pass@urlstring.mongodb.net/organizations
 ```
 
+```
 # AWS settings
 
 AWS_ACCESS_KEY_ID=AWS_ACCESS_KEY_ID
 AWS_SECRET_ACCESS_KEY=AWS_SECRET_ACCESS_KEY
 S3_BUCKET_NAME=S3_BUCKET_NAME
+```
 
+```
 # Logging settings
 
 JACKSON_LOAD_BALANCER_URL=http://jackson-load-balancer:5555
-API Endpoints
-Auth Routes
-POST /api/auth/signup
-Registers a new user or organization.
-Body Parameters:
-name: String
-email: String
-password: String
-organization: String (optional for user signup)
-POST /api/auth/login
-Authenticates a user.
-Body Parameters:
-email: String
-password: String
-POST /api/auth/reset-password
-Initiates password reset.
-Body Parameters:
-email: String
-POST /api/auth/logout
-Logs out a user by invalidating the JWT.
-Organization Routes
-POST /api/organizations
-Creates a new organization.
-Body Parameters:
-name: String
-adminEmail: String (used to create the first admin user)
-branding: Object (e.g., logo, colors)
-GET /api/organizations/
-Retrieves organization details.
-Path Parameters:
-orgId: String
-PUT /api/organizations/
-Updates organization details.
-Path Parameters:
-orgId: String
-Body Parameters:
-name: String
-branding: Object
-User Management Routes
-GET /api/users/
+JACKSON_LOAD_BALANCER_LOG_ROUTE=/jackson/log
+JACKSON_LOAD_BALANCER_EMAIL_ROUTE=/jackson/email
+```
 
-Retrieves user details.
-Path Parameters:
-userId: String
-PUT /api/users/
+### Auth Routes
 
-Updates user profile information.
-Path Parameters:
-userId: String
-Body Parameters:
-name: String
-email: String
-GET /api/organizations/
-/users
+**POST /jackson/auth/register**
 
-Retrieves all users within an organization.
-Path Parameters:
-orgId: String
-PUT /api/organizations/
-/users/
-/verify
+Registers a new user.
 
-Verifies a user within an organization.
-Path Parameters:
-orgId: String
-userId: String
-Document Routes
-POST /api/documents
-Uploads a document for an organization.
-Body Parameters:
-orgId: String
-document: File
-GET /api/documents/
-Lists all documents for an organization.
-Path Parameters:
-orgId: String
-DELETE /api/documents/
-Deletes a document.
-Path Parameters:
-docId: String
-Invitation and Intake Routes
-POST /api/invitations
-Sends an invitation to a user (e.g., patient) to join an organization.
-Body Parameters:
-email: String
-name: String
-orgId: String
-POST /api/intake
-Submits an intake form for a user requesting access to an organization.
-Body Parameters:
-email: String
-name: String
-intakeData: Object
-Database Schemas
-User Schema
-typescript
-Copy code
-import { Schema, model, Document } from 'mongoose';
-
-interface IUser extends Document {
+```
 name: string;
 email: string;
 password: string;
-organization?: Schema.Types.ObjectId;
-role: 'admin' | 'member';
-hasBeenVerified: boolean;
-createdAt: Date;
-updatedAt: Date;
+phone?: number;
+dob?: Date;
+organization?: string;
+inviteCode?: string;
+role?: 'user' | 'admin' | 'superadmin' | 'dev';
+```
+
+**POST /api/auth/login**
+
+Authenticates a user.
+
+```
+email: string;
+password: string;
+```
+
+**POST /api/auth/reset-password**
+
+Initiates password reset.
+
+```
+email: string; // Needs Token
+```
+
+**POST /api/auth/logout**
+
+Logs out a user by invalidating the JWT.
+
+### Organization Routes
+
+**POST /api/organizations**
+
+Creates a new organization.
+
+```
+name: string;
+adminEmail: string;
+branding?: Object;
+```
+
+**GET /api/organizations/**
+
+Retrieves organization details.
+
+```
+orgId: string;
+```
+
+**PUT /api/organizations/**
+
+Updates organization details.
+
+Path Parameters:
+
+```
+orgId: string;
+```
+
+Body Parameters:
+
+```
+name?: string;
+branding?: Object;
+```
+
+### User Management Routes
+
+**GET /api/users/**
+
+Retrieves user details.
+
+Path Parameters:
+
+```
+userId: string;
+```
+
+**PUT /api/users/**
+
+Updates user profile information.
+
+Path Parameters:
+
+```
+userId: string;
+```
+
+Body Parameters:
+
+```
+name?: string;
+email?: string;
+password?: string;
+phone?: number;
+dob?: Date;
+organization?: string;
+role?: 'consumer' | 'member' | 'admin' | 'dev';
+```
+
+**GET /api/organizations/users**
+
+Retrieves all users within an organization.
+
+Path Parameters:
+
+```
+orgId: string
+```
+
+**PUT /api/organizations/users/verify**
+
+Verifies a user within an organization.
+
+Path Parameters:
+
+```
+orgId: string
+userId: string
+```
+
+### Document Routes
+
+**POST /api/documents**
+
+Uploads a document for an organization.
+
+Body Parameters:
+
+```
+orgId: string;
+document: File; // URL To File
+```
+
+**GET /api/documents/**
+
+Lists all documents for an organization.
+
+Path Parameters:
+
+```
+orgId: string;
+```
+
+**DELETE /api/documents/**
+
+Deletes a document.
+
+Path Parameters:
+
+```
+docId: string;
+```
+
+# Invitation and Intake Routes
+
+**POST /api/invitations**
+
+Sends an invitation to a user (e.g., patient) to join an organization.
+
+Body Parameters:
+
+```
+email: string;
+name: string;
+orgId: string;
+```
+
+**POST /api/intake**
+
+Submits an intake form for a user requesting access to an organization.
+
+Body Parameters:
+
+```
+email: string;
+name: string;
+intakeData: Object;
+```
+
+### Database Schemas
+
+**User Schema**
+
+```
+import { Schema, model, Document } from 'mongoose';
+
+interface IUser extends Document {
+    name: string;
+    email: string;
+    password: string;
+    phone?: number;
+    dob?: Date;
+    organization?: Schema.Types.ObjectId;
+    role: 'consumer' | 'member' | 'admin' | 'dev';
+    hasBeenVerified: boolean;
+    createdAt: Date;
+    updatedAt: Date;
 }
 
 const userSchema = new Schema<IUser>({
-name: { type: String, required: true },
-email: { type: String, required: true, unique: true },
-password: { type: String, required: true },
-organization: { type: Schema.Types.ObjectId, ref: 'Organization' },
-role: { type: String, enum: ['admin', 'member'], default: 'member' },
-hasBeenVerified: { type: Boolean, default: false },
-createdAt: { type: Date, default: Date.now },
-updatedAt: { type: Date, default: Date.now }
+    name: { type: string, required: true },
+    email: { type: string, required: true, unique: true },
+    password: { type: string, required: true },
+    phone: { type: number, required: false },
+    dob: { type: Date, required: false },
+    organization: { type: Schema.Types.ObjectId, ref: 'Organization' },
+    role: { type: string, enum: ['admin', 'member'], default: 'member' },
+    hasBeenVerified: { type: Boolean, default: false },
+    createdAt: { type: Date, default: Date.now },
+    updatedAt: { type: Date, default: Date.now }
 });
 
 export const User = model<IUser>('User', userSchema);
-Organization Schema
-typescript
-Copy code
+```
+
+### Organization Schema
+
+```
 import { Schema, model, Document } from 'mongoose';
 
 interface IOrganization extends Document {
-name: string;
-branding: {
-logo?: string;
-colors?: Map<string, string>;
-};
-documents: Schema.Types.ObjectId[];
-admins: Schema.Types.ObjectId[];
-createdAt: Date;
-updatedAt: Date;
+    name: string;
+    branding?: {
+    logo?: string;
+    colors?: Map<string, string>;
+    };
+    documents: Schema.Types.ObjectId[];
+    admins: Schema.Types.ObjectId[];
+    createdAt: Date;
+    updatedAt: Date;
 }
 
 const organizationSchema = new Schema<IOrganization>({
-name: { type: String, required: true },
-branding: {
-logo: { type: String },
-colors: { type: Map, of: String }
-},
-documents: [{ type: Schema.Types.ObjectId, ref: 'Document' }],
-admins: [{ type: Schema.Types.ObjectId, ref: 'User' }],
-createdAt: { type: Date, default: Date.now },
-updatedAt: { type: Date, default: Date.now }
+    name: { type: string, required: true },
+    branding: {
+        logo: { type: string },
+        colors: { type: Map, of: string }
+    },
+    documents: [{ type: Schema.Types.ObjectId, ref: 'Document' }],
+    admins: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+    createdAt: { type: Date, default: Date.now },
+    updatedAt: { type: Date, default: Date.now }
 });
 
 export const Organization = model<IOrganization>('Organization', organizationSchema);
-Document Schema
-typescript
-Copy code
+```
+
+### Document Schema
+
+```
 import { Schema, model, Document } from 'mongoose';
 
 interface IDocument extends Document {
-orgId: Schema.Types.ObjectId;
-name: string;
-path: string;
-uploadedAt: Date;
+    orgId: Schema.Types.ObjectId;
+    name: string;
+    path: string;
+    uploadedAt: Date;
 }
 
 const documentSchema = new Schema<IDocument>({
-orgId: { type: Schema.Types.ObjectId, ref: 'Organization', required: true },
-name: { type: String, required: true },
-path: { type: String, required: true },
-uploadedAt: { type: Date, default: Date.now }
+    orgId: { type: Schema.Types.ObjectId, ref: 'Organization', required: true },
+    name: { type: string, required: true },
+    path: { type: string, required: true },
+    uploadedAt: { type: Date, default: Date.now }
 });
 
 export const Document = model<IDocument>('Document', documentSchema);
-Invitation Schema
-typescript
-Copy code
+```
+
+### Invitation Schema
+
+```
 import { Schema, model, Document } from 'mongoose';
 
 interface IInvitation extends Document {
-orgId: Schema.Types.ObjectId;
-email: string;
-name: string;
-inviteCode: string;
-sentAt: Date;
-acceptedAt?: Date;
+    orgId: Schema.Types.ObjectId;
+    email: string;
+    name: string;
+    inviteCode: string;
+    sentAt: Date;
+    acceptedAt?: Date;
 }
 
 const invitationSchema = new Schema<IInvitation>({
-orgId: { type: Schema.Types.ObjectId, ref: 'Organization', required: true },
-email: { type: String, required: true },
-name: { type: String, required: true },
-inviteCode: { type: String, required: true },
-sentAt: { type: Date, default: Date.now },
-acceptedAt: { type: Date }
+    orgId: { type: Schema.Types.ObjectId, ref: 'Organization', required: true },
+    email: { type: string, required: true },
+    name: { type: string, required: true },
+    inviteCode: { type: string, required: true },
+    sentAt: { type: Date, default: Date.now },
+    acceptedAt: { type: Date }
 });
 
 export const Invitation = model<IInvitation>('Invitation', invitationSchema);
-Running the Application
+```
+
+### Running the Application
+
 Local Development
-Start the MongoDB server:
 
-bash
-Copy code
-mongod --config /usr/local/etc/mongod.conf
-Run the backend server:
+1. Spin Up MongoDB. Put URL in `.env`
 
-bash
-Copy code
+2. Run API.
+
+```
+cd api
 npm run dev
-Start the frontend (if using a separate frontend service):
+```
 
-bash
-Copy code
-cd frontend
+3. Run UI.
+
+```
+cd ui
 npm run dev
-Docker Development
+```
+
+### Docker Development
+
 Start all services using Docker Compose:
 
-bash
-Copy code
-docker-compose up --build
-Access the application at http://localhost:4000.
+```
+docker-compose up -d
+```
 
-Deployment
-CI/CD Pipeline
-Build and Test: Use GitHub Actions to automate testing and Docker image building.
-Push to AWS ECR: Push the Docker images to your Amazon Elastic Container Registry.
-Deploy to AWS EC2: Deploy the containers to your EC2 instances using SSH and Docker Compose.
+Access the application at http://localhost:22000.
+
+### Deployment
+
+1. Build and Test: Use GitHub Actions to automate testing and Docker image building.
+2. Push to AWS ECR: Push the Docker images to your Amazon Elastic Container Registry.
+3. Deploy to AWS EC2: Deploy the containers to your EC2 instances using SSH and Docker Compose.
