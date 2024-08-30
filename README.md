@@ -2,43 +2,33 @@
 
 This is a comprehensive user and organization management system built in full-stack TypeScript with Node.js, Express, and MongoDB.
 
-It supports user authentication, role-based access control, organization management, document storage, user intake forms, and robust admin functionality.
+It supports user authentication, role-based access control, organization management, and robust admin functionality.
 
 The system is designed to be flexible and scalable, suitable for various industries, including healthcare, where organizations need to manage users and their data securely.
 
 ## Table of Contents
 
 - [Features](#features)
-- [Technologies Used](#technologies-used)
+- [Technologies Used (All TypeScript Plz)](#technologies-used-all-typescript-plz)
 - [System Architecture](#system-architecture)
 - [Installation](#installation)
-- [Environment Variables](#environment-variables)
-- [API Endpoints](#api-endpoints)
-- [Database Schemas](#database-schemas)
-- [Running the Application](#running-the-application)
-- [Deployment](#deployment)
-- [License](#license)
 
 ## Features
 
 - **User Authentication & Authorization**: User registration, login, password reset, and role-based access control (RBAC).
 - **Organization Management**: Create and manage organizations, invite users, and manage branding.
-- **User Intake & Verification**: Intake forms for user access requests and admin verification workflows.
-- **Document Management**: Upload, retrieve, and delete documents with AWS S3 integration.
 - **Admin User Management Portal**: Manage users within an organization, including roles, activities, and bulk actions.
 - **Logging & Monitoring**: Integrated with `jackson-load-balancer` for centralized logging and monitoring.
 
-## Technologies Used
+## Technologies Used (All TypeScript Plz)
 
-- **Backend**: Node.js, Express.js, TypeScript
-- **Database**: MongoDB with Mongoose
-- **Frontend**: Next.js (React.js) with Chakra UI, TypeScript
-- **Authentication**: JWT (JSON Web Tokens)
-- **File Storage**: AWS S3
-- **Interaction Storage**: Azure Container
-- **Validation**: Joi
-- **Environment Management**: Docker Compose
-- **Logging**: Custom logging via `jackson-load-balancer`
+- **Backend**: Node.js (with `express`)
+- **Database**: MongoDB on Atlas (with `mongoose`)
+- **Frontend**: Next.js (React.js Framework) (with `chakra-ui`)
+- **Authentication**: JWT (JSON Web Tokens) (with `passport`)
+- **Validation**: `joi`
+- **Environment Management**: Docker (with `docker-compose`)
+- **Logging**: `jackson-load-balancer`
 
 ## System Architecture
 
@@ -46,46 +36,33 @@ The system architecture is designed to separate concerns and ensure scalability:
 
 1. **Frontend (Next.js + Chakra UI)**: Handles UI, including authentication pages, dashboards, and admin management portals.
 2. **Backend (Node.js + Express + TypeScript)**: Exposes RESTful API endpoints, handles authentication, organization management, and user verification workflows.
-3. **Database (MongoDB)**: Stores user, organization, document metadata, and activity logs.
-4. **File Storage (AWS S3)**: Manages document storage with secure, scalable file uploads.
-5. **Interaction Storage (Azure Container)**: Manages inputs and outputs (requests and responses) for user interaction data for future analysis.
+3. **Database (MongoDB)**: Stores user, organization, and activity logs.
 6. **Logging and Monitoring**: Centralized logging and monitoring with `jackson-load-balancer`.
 
 ## Installation
 
 ### Prerequisites
 
+- Git
 - Node.js (v20.x or higher)
 - Docker and Docker Compose
 - MongoDB Atlas
-- AWS (for S3 and ECR)
 
-### Steps
+### 3 Steps
 
-1. Clone the repository:
-
-   ```bash
-   git clone https://github.com/jacksonmccluskey/jackson-user-manager.git
-   cd jackson-user-manager
-   ```
-
-### Install dependencies:
+1. Clone & Install:
 
 ```
+git clone https://github.com/jacksonmccluskey/jackson-load-balancer.git
+cd jackson-load-balancer
+npm install
+cd ..
+git clone https://github.com/jacksonmccluskey/jackson-user-manager.git
+cd jackson-user-manager
 npm install
 ```
 
-2. Set up environment variables (see Environment Variables).
-
-3. Build Docker images (optional for local development):
-
-```
-docker-compose build
-```
-
-### Environment Variables
-
-Create a .env file in the root directory and configure the following environment variables:
+2. Create a .env file in the root directory and configure the following environment variables:
 
 ```
 # General Settings
@@ -93,24 +70,18 @@ Create a .env file in the root directory and configure the following environment
 PORT=22000
 JWT_SECRET=JWT_SECRET
 NODE_ENV=DEVELOPMENT
-```
 
-```
 # MongoDB Settings
 
-MONGO_URI=mongodb://localhost:4444/organizations
-# Atlas: mongodb+srv://user:pass@urlstring.mongodb.net/organizations
-```
+MONGO_URI=mongodb://localhost:4444/
+# Atlas: mongodb+srv://user:pass@urlstring.mongodb.net/jackson-database
 
-```
 # AWS settings
 
 AWS_ACCESS_KEY_ID=AWS_ACCESS_KEY_ID
 AWS_SECRET_ACCESS_KEY=AWS_SECRET_ACCESS_KEY
 S3_BUCKET_NAME=S3_BUCKET_NAME
-```
 
-```
 # Logging settings
 
 JACKSON_LOAD_BALANCER_URL=http://jackson-load-balancer:5555
@@ -118,343 +89,12 @@ JACKSON_LOAD_BALANCER_LOG_ROUTE=/jackson/log
 JACKSON_LOAD_BALANCER_EMAIL_ROUTE=/jackson/email
 ```
 
-### Auth Routes
-
-**POST /jackson/auth/register**
-
-Registers a new user.
+3. Run Docker Compose
 
 ```
-name: string;
-email: string;
-password: string;
-phone?: number;
-dob?: Date;
-organization?: string;
-inviteCode?: string;
-role?: 'user' | 'admin' | 'superadmin' | 'dev';
+cd jackson-load-balancer
+docker compose up -d
+cd ..
+cd jackson-user-manager
+docker compose up -d
 ```
-
-**POST /api/auth/login**
-
-Authenticates a user.
-
-```
-email: string;
-password: string;
-```
-
-**POST /api/auth/reset-password**
-
-Initiates password reset.
-
-```
-email: string; // Needs Token
-```
-
-**POST /api/auth/logout**
-
-Logs out a user by invalidating the JWT.
-
-### Organization Routes
-
-**POST /api/organizations**
-
-Creates a new organization.
-
-```
-name: string;
-adminEmail: string;
-branding?: Object;
-```
-
-**GET /api/organizations/**
-
-Retrieves organization details.
-
-```
-orgId: string;
-```
-
-**PUT /api/organizations/**
-
-Updates organization details.
-
-Path Parameters:
-
-```
-orgId: string;
-```
-
-Body Parameters:
-
-```
-name?: string;
-branding?: Object;
-```
-
-### User Management Routes
-
-**GET /api/users/**
-
-Retrieves user details.
-
-Path Parameters:
-
-```
-userId: string;
-```
-
-**PUT /api/users/**
-
-Updates user profile information.
-
-Path Parameters:
-
-```
-userId: string;
-```
-
-Body Parameters:
-
-```
-name?: string;
-email?: string;
-password?: string;
-phone?: number;
-dob?: Date;
-organization?: string;
-role?: 'consumer' | 'member' | 'admin' | 'dev';
-```
-
-**GET /api/organizations/users**
-
-Retrieves all users within an organization.
-
-Path Parameters:
-
-```
-orgId: string
-```
-
-**PUT /api/organizations/users/verify**
-
-Verifies a user within an organization.
-
-Path Parameters:
-
-```
-orgId: string
-userId: string
-```
-
-### Document Routes
-
-**POST /api/documents**
-
-Uploads a document for an organization.
-
-Body Parameters:
-
-```
-orgId: string;
-document: File; // URL To File
-```
-
-**GET /api/documents/**
-
-Lists all documents for an organization.
-
-Path Parameters:
-
-```
-orgId: string;
-```
-
-**DELETE /api/documents/**
-
-Deletes a document.
-
-Path Parameters:
-
-```
-docId: string;
-```
-
-# Invitation and Intake Routes
-
-**POST /api/invitations**
-
-Sends an invitation to a user (e.g., patient) to join an organization.
-
-Body Parameters:
-
-```
-email: string;
-name: string;
-orgId: string;
-```
-
-**POST /api/intake**
-
-Submits an intake form for a user requesting access to an organization.
-
-Body Parameters:
-
-```
-email: string;
-name: string;
-intakeData: Object;
-```
-
-### Database Schemas
-
-**User Schema**
-
-```
-import { Schema, model, Document } from 'mongoose';
-
-interface IUser extends Document {
-    name: string;
-    email: string;
-    password: string;
-    phone?: number;
-    dob?: Date;
-    organization?: Schema.Types.ObjectId;
-    role: 'consumer' | 'member' | 'admin' | 'dev';
-    hasBeenVerified: boolean;
-    createdAt: Date;
-    updatedAt: Date;
-}
-
-const userSchema = new Schema<IUser>({
-    name: { type: string, required: true },
-    email: { type: string, required: true, unique: true },
-    password: { type: string, required: true },
-    phone: { type: number, required: false },
-    dob: { type: Date, required: false },
-    organization: { type: Schema.Types.ObjectId, ref: 'Organization' },
-    role: { type: string, enum: ['admin', 'member'], default: 'member' },
-    hasBeenVerified: { type: Boolean, default: false },
-    createdAt: { type: Date, default: Date.now },
-    updatedAt: { type: Date, default: Date.now }
-});
-
-export const User = model<IUser>('User', userSchema);
-```
-
-### Organization Schema
-
-```
-import { Schema, model, Document } from 'mongoose';
-
-interface IOrganization extends Document {
-    name: string;
-    branding?: {
-    logo?: string;
-    colors?: Map<string, string>;
-    };
-    documents: Schema.Types.ObjectId[];
-    admins: Schema.Types.ObjectId[];
-    createdAt: Date;
-    updatedAt: Date;
-}
-
-const organizationSchema = new Schema<IOrganization>({
-    name: { type: string, required: true },
-    branding: {
-        logo: { type: string },
-        colors: { type: Map, of: string }
-    },
-    documents: [{ type: Schema.Types.ObjectId, ref: 'Document' }],
-    admins: [{ type: Schema.Types.ObjectId, ref: 'User' }],
-    createdAt: { type: Date, default: Date.now },
-    updatedAt: { type: Date, default: Date.now }
-});
-
-export const Organization = model<IOrganization>('Organization', organizationSchema);
-```
-
-### Document Schema
-
-```
-import { Schema, model, Document } from 'mongoose';
-
-interface IDocument extends Document {
-    orgId: Schema.Types.ObjectId;
-    name: string;
-    path: string;
-    uploadedAt: Date;
-}
-
-const documentSchema = new Schema<IDocument>({
-    orgId: { type: Schema.Types.ObjectId, ref: 'Organization', required: true },
-    name: { type: string, required: true },
-    path: { type: string, required: true },
-    uploadedAt: { type: Date, default: Date.now }
-});
-
-export const Document = model<IDocument>('Document', documentSchema);
-```
-
-### Invitation Schema
-
-```
-import { Schema, model, Document } from 'mongoose';
-
-interface IInvitation extends Document {
-    orgId: Schema.Types.ObjectId;
-    email: string;
-    name: string;
-    inviteCode: string;
-    sentAt: Date;
-    acceptedAt?: Date;
-}
-
-const invitationSchema = new Schema<IInvitation>({
-    orgId: { type: Schema.Types.ObjectId, ref: 'Organization', required: true },
-    email: { type: string, required: true },
-    name: { type: string, required: true },
-    inviteCode: { type: string, required: true },
-    sentAt: { type: Date, default: Date.now },
-    acceptedAt: { type: Date }
-});
-
-export const Invitation = model<IInvitation>('Invitation', invitationSchema);
-```
-
-### Running the Application
-
-Local Development
-
-1. Spin Up MongoDB. Put URL in `.env`
-
-2. Run API.
-
-```
-cd api
-npm run dev
-```
-
-3. Run UI.
-
-```
-cd ui
-npm run dev
-```
-
-### Docker Development
-
-Start all services using Docker Compose:
-
-```
-docker-compose up -d
-```
-
-Access the application at http://localhost:22000.
-
-### Deployment
-
-1. Build and Test: Use GitHub Actions to automate testing and Docker image building.
-2. Push to AWS ECR: Push the Docker images to your Amazon Elastic Container Registry.
-3. Deploy to AWS EC2: Deploy the containers to your EC2 instances using SSH and Docker Compose.
