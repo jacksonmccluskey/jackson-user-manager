@@ -67,20 +67,13 @@ npm install
 ```
 # General Settings
 
-PORT=22000
-JWT_SECRET=JWT_SECRET
+PORT=22222
 NODE_ENV=DEVELOPMENT
 
 # MongoDB Settings
 
-MONGO_URI=mongodb://localhost:4444/
+MONGO_URI=mongodb://localhost:4444/jackson-database
 # Atlas: mongodb+srv://user:pass@urlstring.mongodb.net/jackson-database
-
-# AWS settings
-
-AWS_ACCESS_KEY_ID=AWS_ACCESS_KEY_ID
-AWS_SECRET_ACCESS_KEY=AWS_SECRET_ACCESS_KEY
-S3_BUCKET_NAME=S3_BUCKET_NAME
 
 # Logging settings
 
