@@ -98,85 +98,85 @@ docker compose up -d
 
 User Registration & Profile:
 
-- POST /users/register - Register a new user with initial role and organization assignment.
-- GET /users/profile - Get the current user's profile, including detailed fields like profile, settings, securityQuestions, etc.
-- PUT /users/profile - Update the current user's profile, including profile, address, emergencyContacts, and preferences.
-- PUT /users/profile/security - Update security settings, including securityQuestions and twoFactorAuthEnabled.
-- PUT /users/profile/settings - Update user settings, such as theme and notification preferences.
+- POST /api/users/register - Register a new user with initial role and organization assignment.
+- GET /api/users/profile - Get the current user's profile, including detailed fields like profile, settings, securityQuestions, etc.
+- PUT /api/users/profile - Update the current user's profile, including profile, address, emergencyContacts, and preferences.
+- PUT /api/users/profile/security - Update security settings, including securityQuestions and twoFactorAuthEnabled.
+- PUT /api/users/profile/settings - Update user settings, such as theme and notification preferences.
 
 Password Management:
 
-- POST /users/password-reset - Request a password reset, with tracking of auditLogs for the action.
-- POST /users/password-reset/confirm - Confirm and set a new password with auditLogs entry.
-- PUT /users/password/change - Change the user's password when logged in, with auditLogs entry.
+- POST /api/users/password-reset - Request a password reset, with tracking of auditLogs for the action.
+- POST /api/users/password-reset/confirm - Confirm and set a new password with auditLogs entry.
+- PUT /api/users/password/change - Change the user's password when logged in, with auditLogs entry.
 
 Session Management:
 
-- GET /users/sessions - List active sessions for the current user, using auditLogs to track login events.
-- DELETE /users/sessions/:sessionId - Log out from a specific session, with an entry in auditLogs.
+- GET /api/users/sessions - List active sessions for the current user, using auditLogs to track login events.
+- DELETE /api/users/sessions/:sessionId - Log out from a specific session, with an entry in auditLogs.
 
 ### Authentication
 
 User Authentication:
 
-- POST /auth/login - Log in a user, updating lastLogin and adding a login event to auditLogs.
-- POST /auth/logout - Log out a user from all sessions or a specific session, with auditLogs entry.
-- POST /auth/refresh-token - Refresh JWT tokens, with a tokenRefresh event in auditLogs.
-- POST /auth/mfa-setup - Set up multi-factor authentication (MFA) using twoFactorAuthEnabled and twoFactorAuthSecret.
-- POST /auth/mfa-verify - Verify MFA during login, with auditLogs entry for successful or failed attempts.
+- POST /api/auth/login - Log in a user, updating lastLogin and adding a login event to auditLogs.
+- POST /api/auth/logout - Log out a user from all sessions or a specific session, with auditLogs entry.
+- POST /api/auth/refresh-token - Refresh JWT tokens, with a tokenRefresh event in auditLogs.
+- POST /api/auth/mfa-setup - Set up multi-factor authentication (MFA) using twoFactorAuthEnabled and twoFactorAuthSecret.
+- POST /api/auth/mfa-verify - Verify MFA during login, with auditLogs entry for successful or failed attempts.
 
 ### Administration
    
 Admin User Management:
 
-- GET /admin/users - Get all users, with filtering by roles, organizations, and isActive status.
-- GET /admin/users/:userId - Get detailed information about a specific user by ID, including their roles, organizations, and audit logs.
-- PUT /admin/users/:userId - Update a user’s details, including roles, organizations, and isActive status.
-- DELETE /admin/users/:userId - Deactivate or delete a user, setting isActive to false and recording the action in auditLogs.
-- PUT /admin/users/:userId/activate - Reactivate a deactivated user, updating isActive and logging the event.
+- GET /api/admin/users - Get all users, with filtering by roles, organizations, and isActive status.
+- GET /api/admin/users/:userId - Get detailed information about a specific user by ID, including their roles, organizations, and audit logs.
+- PUT /api/admin/users/:userId - Update a user’s details, including roles, organizations, and isActive status.
+- DELETE /api/admin/users/:userId - Deactivate or delete a user, setting isActive to false and recording the action in auditLogs.
+- PUT /api/admin/users/:userId/activate - Reactivate a deactivated user, updating isActive and logging the event.
 
 ### Role-Based Access Control (RBAC)
 
 Role Management:
 
-- POST /rbac/roles - Create a new role, which can be assigned to users and linked to organizations.
-- GET /rbac/roles - Get all roles, with filtering based on usage within organizations.
-- GET /rbac/roles/:roleId - Get details of a specific role, including which users and organizations it is associated with.
-- PUT /rbac/roles/:roleId - Update a role’s details, including permissions, with changes recorded in auditLogs.
-- DELETE /rbac/roles/:roleId - Delete a role, ensuring that users and organizations are updated accordingly.
+- POST /api/rbac/roles - Create a new role, which can be assigned to users and linked to organizations.
+- GET /api/rbac/roles - Get all roles, with filtering based on usage within organizations.
+- GET /api/rbac/roles/:roleId - Get details of a specific role, including which users and organizations it is associated with.
+- PUT /api/rbac/roles/:roleId - Update a role’s details, including permissions, with changes recorded in auditLogs.
+- DELETE /api/rbac/roles/:roleId - Delete a role, ensuring that users and organizations are updated accordingly.
 
 Permission Management:
 
-- POST /rbac/permissions - Create a new permission, to be assigned to roles.
-- GET /rbac/permissions - Get all permissions, with usage statistics across roles and organizations.
-- GET /rbac/permissions/:permissionId - Get details of a specific permission, including which roles it is associated with.
-- PUT /rbac/permissions/:permissionId - Update permission details, with auditLogs tracking changes.
-- DELETE /rbac/permissions/:permissionId - Delete a permission, with automatic updates to roles that included it.
+- POST /api/rbac/permissions - Create a new permission, to be assigned to roles.
+- GET /api/rbac/permissions - Get all permissions, with usage statistics across roles and organizations.
+- GET /api/rbac/permissions/:permissionId - Get details of a specific permission, including which roles it is associated with.
+- PUT /api/rbac/permissions/:permissionId - Update permission details, with auditLogs tracking changes.
+- DELETE /api/rbac/permissions/:permissionId - Delete a permission, with automatic updates to roles that included it.
 
 Assigning Roles & Permissions:
 
-- POST /rbac/roles/:roleId/assign - Assign a role to a user, linking it to the appropriate organization.
-- DELETE /rbac/roles/:roleId/revoke - Revoke a role from a user, with updates to the user’s roles and corresponding audit logs.
-- POST /rbac/roles/:roleId/permissions - Assign permissions to a role, with inheritance and audit logging.
-- DELETE /rbac/roles/:roleId/permissions/:permissionId - Remove a permission from a role, with impact assessment and logging.
+- POST /api/rbac/roles/:roleId/assign - Assign a role to a user, linking it to the appropriate organization.
+- DELETE /api/rbac/roles/:roleId/revoke - Revoke a role from a user, with updates to the user’s roles and corresponding audit logs.
+- POST /api/rbac/roles/:roleId/permissions - Assign permissions to a role, with inheritance and audit logging.
+- DELETE /api/rbac/roles/:roleId/permissions/:permissionId - Remove a permission from a role, with impact assessment and logging.
 
 ### User Invitations
 
 User Invitation Management:
 
-- POST /invitations/send - Send an invitation to a user, generating an invitation code linked to a user document.
-- POST /invitations/resend/:invitationId - Resend an invitation, updating the invitation status in the user document.
-- POST /invitations/accept - Accept an invitation, setting hasAccepted to true and linking the user to their roles and organizations.
-- GET /invitations/status/:invitationId - Check the status of an invitation, including whether it has been accepted.
+- POST /api/invitations/send - Send an invitation to a user, generating an invitation code linked to a user document.
+- POST /api/invitations/resend/:invitationId - Resend an invitation, updating the invitation status in the user document.
+- POST /api/invitations/accept - Accept an invitation, setting hasAccepted to true and linking the user to their roles and organizations.
+- GET /api/invitations/status/:invitationId - Check the status of an invitation, including whether it has been accepted.
 
 ### Logging & Audit
 
 Audit Log Management:
 
-- GET /audit-logs - Get all audit logs with advanced filtering (by user, organization, action, date).
-- GET /audit-logs/:auditLogId - Get details of a specific audit log, including associated users and organizations.
-- GET /audit-logs/users/:userId - Get audit logs related to a specific user, tracking actions such as logins, role changes, and updates.
+- GET /api/audit-logs - Get all audit logs with advanced filtering (by user, organization, action, date).
+- GET /api/audit-logs/:auditLogId - Get details of a specific audit log, including associated users and organizations.
+- GET /api/audit-logs/users/:userId - Get audit logs related to a specific user, tracking actions such as logins, role changes, and updates.
 
 System Logging:
 
-- GET /logs - Access system logs for monitoring and debugging, including those related to user and organization actions.
+- GET /api/logs - Access system logs for monitoring and debugging, including those related to user and organization actions.
