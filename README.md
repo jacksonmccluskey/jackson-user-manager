@@ -1,4 +1,4 @@
-# jackson-user-manager
+# jackson-user-manager (temporary @mryechkin fork w/ supabase)
 
 This is a comprehensive user and organization management system built in full-stack TypeScript with Node.js, Express, and MongoDB.
 
@@ -14,7 +14,7 @@ The system is designed to be flexible and scalable, suitable for various industr
 - [Prerequisites](#prerequisites)
 - [3 Steps](#3-steps)
 - [Routes](#routes)
-  
+
 # Features
 
 - **User Authentication & Authorization**: User registration, login, password reset, and role-based access control (RBAC).
@@ -39,7 +39,7 @@ The system architecture is designed to separate concerns and ensure scalability:
 1. **Frontend (Next.js + Chakra UI)**: Handles UI, including authentication pages, dashboards, and admin management portals.
 2. **Backend (Node.js + Express + TypeScript)**: Exposes RESTful API endpoints, handles authentication, organization management, and user verification workflows.
 3. **Database (MongoDB)**: Stores user, organization, and activity logs.
-6. **Logging and Monitoring**: Centralized logging and monitoring with `jackson-load-balancer`.
+4. **Logging and Monitoring**: Centralized logging and monitoring with `jackson-load-balancer`.
 
 # Prerequisites
 
@@ -126,7 +126,7 @@ User Authentication:
 - POST /api/auth/mfa-verify - Verify MFA during login, with auditLogs entry for successful or failed attempts.
 
 ### Administration
-   
+
 Admin User Management:
 
 - GET /api/admin/users - Get all users, with filtering by roles, organizations, and isActive status.
