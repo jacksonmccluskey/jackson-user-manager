@@ -1,14 +1,14 @@
 {
   "name": "nextjs-supabase-auth",
   "version": "2.0.2",
-  "author": "Mykhaylo Ryechkin",
   "license": "MIT",
+  "author": "Mykhaylo Ryechkin",
   "scripts": {
-    "dev": "next dev",
     "build": "next build",
-    "start": "next start",
+    "dev": "next dev --port 12345",
     "lint": "eslint --ignore-path .gitignore .",
-    "lint:fix": "eslint --ignore-path .gitignore --fix ."
+    "lint:fix": "eslint --ignore-path .gitignore --fix .",
+    "start": "next start"
   },
   "dependencies": {
     "@supabase/auth-helpers-nextjs": "^0.10.0",
