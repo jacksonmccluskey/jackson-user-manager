@@ -3,7 +3,7 @@ import { cookies } from 'next/headers';
 
 import AuthProvider from 'src/components/AuthProvider';
 
-import { config } from '../config';
+import { config } from '../config.js';
 
 import 'src/styles/globals.css';
 
