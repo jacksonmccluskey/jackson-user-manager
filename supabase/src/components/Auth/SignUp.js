@@ -7,6 +7,8 @@ import { Field, Form, Formik } from 'formik';
 import Link from 'next/link';
 import * as Yup from 'yup';
 
+import { config } from '../../config';
+
 const SignUpSchema = Yup.object().shape({
   email: Yup.string().email('Invalid email').required('Required'),
   password: Yup.string().required('Required'),
@@ -21,7 +23,7 @@ const SignUp = () => {
     const { error } = await supabase.auth.signUp({
       email: formData.email,
       password: formData.password,
-      redirectTo: `${window.location.origin}/auth/callback`,
+      redirectTo: `${config.url}/auth/callback`,
     });
 
     if (error) {

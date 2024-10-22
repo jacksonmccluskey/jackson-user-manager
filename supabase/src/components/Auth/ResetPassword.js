@@ -7,6 +7,8 @@ import { Field, Form, Formik } from 'formik';
 import Link from 'next/link';
 import * as Yup from 'yup';
 
+import { config } from '../../config';
+
 const ResetPasswordSchema = Yup.object().shape({
   email: Yup.string().email('Invalid email').required('Required'),
 });
@@ -18,7 +20,7 @@ const ResetPassword = () => {
 
   async function resetPassword(formData) {
     const { error } = await supabase.auth.resetPasswordForEmail(formData.email, {
-      redirectTo: `${window.location.origin}/auth/update-password`,
+      redirectTo: `${config.url}/auth/update-password`,
     });
 
     if (error) {
